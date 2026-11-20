@@ -91,7 +91,7 @@ if __name__ == "__main__":
             final_question = get_final_response(user_input, tool_result)
             final_response = call_llm(final_question, "groq")
 
-            print(f"Final Response: {final_response}")
+            print(f"Final Response: {final_response}.")
 
         elif action == "finish":
             print(f"Agent Response: {action_input}")
