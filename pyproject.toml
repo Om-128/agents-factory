@@ -1,0 +1,11 @@
+[project]
+name = "agents-factory"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "litellm[google]>=1.110.2",
+    "pydantic>=2.14.4",
+    "pydantic-settings>=2.16.3",
+]
