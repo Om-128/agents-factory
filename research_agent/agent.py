@@ -29,14 +29,10 @@ def execute_tool(tool_name: str, tool_input: str) -> str:
     else:
         return f"Tool '{tool_name}' not found."
 
-def test_call_llm(user_input: str = "What is the capital of France?") -> str:
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": user_input}
-    ]
+def test_call_llm(conversation: list) -> str:
     provider = "gemini" 
 
-    response = call_llm(messages, provider)
+    response = call_llm(conversation, provider)
 
     return response
 
@@ -53,32 +49,63 @@ def parse_llm_response(response: str) -> dict:
     response = re.sub(r"```json|```", "", response).strip()
     return json.loads(response)
 
-def get_final_response(user_question, tool_result=None):
-    messages = [
+# def get_final_response(conversation_history: list) -> list:
+#     messages = [
+#         {
+#             "role": "system",
+#             "content": conversation_history
+#         },
+#         {
+#             "role": "user",
+#             "content": "Based on the previous conversation and the tool results, please provide a final answer to the user's original question."
+#         }
+#     ]
+
+#     return messages
+
+if __name__ == "__main__":
+
+    conversation_history = [
         {
-            'role': 'system',
-            'content': SYSTEM_PROMPT
-        },
-        {
-            'role': 'user',
-            'content': f"""
-                User Question: {user_question}
-                Tool Result: {tool_result if tool_result else 'No tool result available.'}
-                Please provide a final response to the user based on the above information."""
+            "role": "system",
+            "content": SYSTEM_PROMPT
         }
     ]
 
-    return messages
+    print("========================================")
+    print("Welcome to the Research Agent!")
+    print("========================================")
+    print(f"Conversation History: {conversation_history}")
+    print("========================================")
 
-if __name__ == "__main__":
     while True:
         user_input = input("Enter your question for the Agent (or type 'exit' to quit): ")
         
         if user_input.lower() == 'exit':
             break
 
-        llm_response = test_call_llm(user_input)
+        conversation_history.append(
+            {
+                "role": "user",
+                "content": user_input
+            }
+        )
+
+        print("========================================")
+        print(f"Conversation History: {conversation_history}")
+        print("========================================")
+
+        llm_response = test_call_llm(conversation_history)
+
+        conversation_history.append(
+            {
+                "role": "assistant",
+                "content": llm_response
+            }
+        )
+
         decision = parse_llm_response(llm_response)
+
 
         action = decision["action"]
         action_input = decision["action_input"]
@@ -88,8 +115,17 @@ if __name__ == "__main__":
             tool_result = execute_tool(action, action_input)
             print(f"Tool Result: {tool_result}")
 
-            final_question = get_final_response(user_input, tool_result)
-            final_response = call_llm(final_question, "groq")
+            conversation_history.append(
+                {
+                    "role": "user",
+                    "content": f"Tool Result: {tool_result}"
+                }
+            )
+            print("========================================")
+            print(f"Conversation History: {conversation_history}")
+            print("========================================")
+
+            final_response = call_llm(conversation_history, "groq")
 
             print(f"Final Response: {final_response}.")
 
