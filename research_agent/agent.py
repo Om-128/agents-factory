@@ -1,16 +1,19 @@
 import re
 import json
-from unittest import result
+from logger import logger
 from llm import call_llm
 from research_agent.tools.calculator import calculator_tool
+from research_agent.tools.date_time import get_date_time
+from research_agent.tools.web_search import web_search
 from research_agent.prompt import SYSTEM_PROMPT
 
 
 # ==== TOOL REGISTERY ====
 
 TOOLS = {
-    "calculator": calculator_tool
-
+    "calculator": calculator_tool,
+    "date_time": get_date_time,
+    "web_search": web_search
 }
 
 def execute_tool(tool_name: str, tool_input: str) -> str:
@@ -44,6 +47,8 @@ def parse_llm_response(response: str) -> dict:
 
 if __name__ == "__main__":
 
+    MAX_ITERATIONS = 5
+
     conversation_history = [
         {
             "role": "system",
@@ -55,12 +60,13 @@ if __name__ == "__main__":
     print("Welcome to the Research Agent!")
     print("========================================")
 
-    while True:
+    for i in range(MAX_ITERATIONS):
         user_input = input("Enter your question for the Agent (or type 'exit' to quit): ")
         
         if user_input.lower() == 'exit':
             break
-
+        
+        
         conversation_history.append(
             {
                 "role": "user",
@@ -68,26 +74,41 @@ if __name__ == "__main__":
             }
         )
 
+        while True:
 
-        llm_response = call_llm(conversation_history)
+            try:
+                llm_response = call_llm(conversation_history)
+                decision = parse_llm_response(llm_response)
 
-        conversation_history.append(
-            {
-                "role": "assistant",
-                "content": llm_response
-            }
-        )
+            except json.JSONDecodeError: # If LLM return invalid json
+                logger.error("Error: LLM returned invalid json")
+                break
 
-        decision = parse_llm_response(llm_response)
+            except Exception as e:
+                logger.error(f"LLM Error: {e}")
+                break
 
+            conversation_history.append(
+                {
+                    "role": "assistant",
+                    "content": llm_response
+                }
+            )
 
-        action = decision["action"]
-        action_input = decision["action_input"]
+            action = decision["action"]
+            action_input = decision["action_input"]
 
-        if action == "calculator":
-            print(f"Agent Response: {decision}")
+            if action == "finish":
+                logger.info(f"Final Agent Response: {action_input}")
+                break
+
+            logger.info(f"Agent Decision: {decision}")
+
             tool_result = execute_tool(action, action_input)
-            print(f"Tool Result: {tool_result}")
+
+            logger.info(f"Tool Result: {tool_result}")
+
+            print("========================================\n")
 
             conversation_history.append(
                 {
@@ -95,10 +116,3 @@ if __name__ == "__main__":
                     "content": f"Tool Result: {tool_result}"
                 }
             )
-
-            final_response = call_llm(conversation_history)
-
-            print(f"Final Response: {final_response}.")
-
-        elif action == "finish":
-            print(f"Agent Response: {action_input}")

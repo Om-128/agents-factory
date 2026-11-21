@@ -6,9 +6,17 @@ Understand the user's task and decide the next step.
 Available tools:
 
 1. calculator
-   Description: Performs mathematical calculations.
-   Input: A mathematical expression.
+    Description: Performs mathematical calculations.
+    Input: A mathematical expression.
 
+2. date_time
+    Description: Returns the current date, time and day.
+    Input: None
+
+3. web_search
+    Description: Searches the web for information.
+    Input: A search query.
+    
 Return a JSON response:
 
 {
@@ -22,4 +30,5 @@ Return a JSON response:
     "action": "finish",
     "action_input": "Your response to the user"
 }
+
 """

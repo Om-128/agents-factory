@@ -5,7 +5,8 @@ class Settings(BaseSettings):
     # API KEYS
     GROQ_API_KEY: SecretStr
     GEMINI_API_KEY: SecretStr
-
+    LANGSEARCH_API_KEY: SecretStr
+    
     model_config = SettingsConfigDict(
                         env_file=".env", 
                         env_file_encoding="utf-8", 
