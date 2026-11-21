@@ -2,10 +2,10 @@ import re
 import json
 from logger import logger
 from llm import call_llm
-from research_agent.tools.calculator import calculator_tool
-from research_agent.tools.date_time import get_date_time
-from research_agent.tools.web_search import web_search
-from research_agent.prompt import SYSTEM_PROMPT
+from scratch_agent.tools.calculator import calculator_tool
+from scratch_agent.tools.date_time import get_date_time
+from scratch_agent.tools.web_search import web_search
+from scratch_agent.prompt import SYSTEM_PROMPT
 
 
 # ==== TOOL REGISTERY ====
