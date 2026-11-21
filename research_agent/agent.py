@@ -42,20 +42,6 @@ def parse_llm_response(response: str) -> dict:
     response = re.sub(r"```json|```", "", response).strip()
     return json.loads(response)
 
-# def get_final_response(conversation_history: list) -> list:
-#     messages = [
-#         {
-#             "role": "system",
-#             "content": conversation_history
-#         },
-#         {
-#             "role": "user",
-#             "content": "Based on the previous conversation and the tool results, please provide a final answer to the user's original question."
-#         }
-#     ]
-
-#     return messages
-
 if __name__ == "__main__":
 
     conversation_history = [
@@ -67,8 +53,6 @@ if __name__ == "__main__":
 
     print("========================================")
     print("Welcome to the Research Agent!")
-    print("========================================")
-    print(f"Conversation History: {conversation_history}")
     print("========================================")
 
     while True:
@@ -84,9 +68,6 @@ if __name__ == "__main__":
             }
         )
 
-        print("========================================")
-        print(f"Conversation History: {conversation_history}")
-        print("========================================")
 
         llm_response = call_llm(conversation_history)
 
@@ -114,9 +95,6 @@ if __name__ == "__main__":
                     "content": f"Tool Result: {tool_result}"
                 }
             )
-            print("========================================")
-            print(f"Conversation History: {conversation_history}")
-            print("========================================")
 
             final_response = call_llm(conversation_history)
 
