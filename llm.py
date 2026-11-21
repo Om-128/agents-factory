@@ -8,7 +8,7 @@ router = Router(
     num_retries=0
 )
 
-def call_llm(messages, provider):
+def call_llm(messages):
 
     try:
         response = router.completion(

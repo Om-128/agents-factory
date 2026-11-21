@@ -29,13 +29,6 @@ def execute_tool(tool_name: str, tool_input: str) -> str:
     else:
         return f"Tool '{tool_name}' not found."
 
-def test_call_llm(conversation: list) -> str:
-    provider = "gemini" 
-
-    response = call_llm(conversation, provider)
-
-    return response
-
 def parse_llm_response(response: str) -> dict:
     """
     Parses the LLM response to extract the action and action_input.
@@ -95,7 +88,7 @@ if __name__ == "__main__":
         print(f"Conversation History: {conversation_history}")
         print("========================================")
 
-        llm_response = test_call_llm(conversation_history)
+        llm_response = call_llm(conversation_history)
 
         conversation_history.append(
             {
@@ -125,9 +118,10 @@ if __name__ == "__main__":
             print(f"Conversation History: {conversation_history}")
             print("========================================")
 
-            final_response = call_llm(conversation_history, "groq")
+            final_response = call_llm(conversation_history)
 
             print(f"Final Response: {final_response}.")
 
         elif action == "finish":
+            conversation_history.append(decision)
             print(f"Agent Response: {action_input}")
