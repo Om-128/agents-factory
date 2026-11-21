@@ -123,5 +123,4 @@ if __name__ == "__main__":
             print(f"Final Response: {final_response}.")
 
         elif action == "finish":
-            conversation_history.append(decision)
             print(f"Agent Response: {action_input}")
